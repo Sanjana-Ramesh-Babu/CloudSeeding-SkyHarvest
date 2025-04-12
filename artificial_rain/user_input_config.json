@@ -1,0 +1,15 @@
+{
+    "location": {
+      "latitude": 26.91,
+      "longitude":  75.81
+    },
+    "crop": {
+      "type": "wheat",
+      "growth_stage": "flowering",
+      "water_requirement_mm_per_week": 50
+    },
+    "irrigation": {
+      "type": "drip",
+      "max_capacity_mm_per_day": 4.0
+    }
+  }

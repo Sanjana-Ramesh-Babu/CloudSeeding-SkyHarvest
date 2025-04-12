@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Rain Calendar 🌧️</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      background: #f5f8ff;
+    }
+    h2 {
+      text-align: center;
+      color: #2d3e50;
+    }
+    #chartContainer {
+      width: 90%;
+      max-width: 1000px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌾 Rain Calendar: Seedable Cloud Predictions</h2>
+  <div id="chartContainer">
+    <canvas id="rainChart"></canvas>
+  </div>
+
+  <script>
+    async function loadData() {
+      const response = await fetch('artificial_rain/filtered_seedable_forecast.json');
+      const data = await response.json();
+
+      const labels = data.map(d => new Date(d.datetime).toLocaleString());
+      const rainfall = data.map(d => d.precipitation_potential_mm);
+      const confidence = data.map(d => d.precipitation_probability);
+
+      const ctx = document.getElementById('rainChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Expected Rainfall (mm)',
+              data: rainfall,
+              backgroundColor: 'rgba(0, 123, 255, 0.6)',
+              borderColor: 'rgba(0, 123, 255, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Confidence Level (%)',
+              data: confidence,
+              type: 'line',
+              yAxisID: 'y1',
+              borderColor: 'rgba(255, 165, 0, 1)',
+              backgroundColor: 'rgba(255, 165, 0, 0.2)',
+              fill: true,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Rainfall (mm)' }
+            },
+            y1: {
+              beginAtZero: true,
+              position: 'right',
+              title: { display: true, text: 'Confidence (%)' },
+              grid: { drawOnChartArea: false }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ": " + context.formattedValue + (context.dataset.label.includes('Confidence') ? '%' : ' mm');
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    loadData();
+  </script>
+
+</body>
+</html>
